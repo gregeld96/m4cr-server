@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Status {
+  id         Int       @id @default(autoincrement())
+  name       String
+  category   String
+  userStatus User[]
+  content    Content[]
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  @@index([id])
+  @@map("status")
+}
+
+model Role {
+  id          String           @id
+  name        String
+  permissions RolePermission[]
+  users       User[]
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime?        @map("updated_at")
+  deletedAt   DateTime?        @map("deleted_at")
+
+  @@index([id])
+  @@map("roles")
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  role         Role       @relation(fields: [roleId], references: [id])
+  roleId       String     @map("role_id")
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  permissionId Int        @map("permission_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime?  @map("updated_at")
+  deletedAt    DateTime?  @map("deleted_at")
+
+  @@index([id])
+  @@map("role_permissions")
+}
+
+model Permission {
+  id        Int              @id @default(autoincrement())
+  name      String
+  method    String
+  role      RolePermission[]
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime?        @map("updated_at")
+  deletedAt DateTime?        @map("deleted_at")
+
+  @@index([id])
+  @@map("permissions")
+}
+
+model MediaFile {
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String?        @db.Text()
+  mimetype     String
+  category     String
+  locationFile String         @map("location_file")
+  size         String?
+  width        String?
+  height       String?
+  profiles     User[]
+  contents     Content[]
+  medias       ContentMedia[]
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime?      @map("updated_at")
+  deletedAt    DateTime?      @map("deleted_at")
+
+  @@index([id, name])
+  @@map("media_files")
+}
+
+model User {
+  id             String     @id
+  email          String     @unique
+  password       String
+  firstName      String     @map("first_name")
+  lastName       String?    @map("last_name")
+  status         Status     @relation(fields: [statusId], references: [id])
+  statusId       Int        @map("status_id")
+  role           Role       @relation(fields: [roleId], references: [id])
+  roleId         String     @map("role_id")
+  profilePhoto   MediaFile? @relation(fields: [profilePhotoId], references: [id])
+  profilePhotoId Int?       @map("profile_photo_id")
+  content        Content[]
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime?  @map("updated_at")
+  deletedAt      DateTime?  @map("deleted_at")
+
+  @@index([email, id])
+  @@map("users")
+}
+
+model Category {
+  id        Int               @id @default(autoincrement())
+  name      String
+  content   ContentCategory[]
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime?         @map("updated_at")
+  deletedAt DateTime?         @map("deleted_at")
+
+  @@map("categories")
+}
+
+model Tag {
+  id        Int          @id @default(autoincrement())
+  name      String
+  content   ContentTag[]
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime?    @map("updated_at")
+  deletedAt DateTime?    @map("deleted_at")
+
+  @@map("tags")
+}
+
+model Content {
+  id          String            @id
+  type        String?
+  body        String?           @db.Text()
+  thumbnail   MediaFile         @relation(fields: [thumbnailId], references: [id])
+  thumbnailId Int               @map("thumbnail_id")
+  status      Status            @relation(fields: [statusId], references: [id])
+  statusId    Int               @map("status_id")
+  author      User?             @relation(fields: [authorId], references: [id])
+  authorId    String?           @map("author_id")
+  categories  ContentCategory[]
+  tags        ContentTag[]
+  medias      ContentMedia[]
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime?         @map("updated_at")
+  deletedAt   DateTime?         @map("deleted_at")
+
+  @@map("contents")
+}
+
+model ContentCategory {
+  id         Int       @id @default(autoincrement())
+  content    Content   @relation(fields: [contentId], references: [id])
+  contentId  String
+  category   Category  @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @map("updated_at")
+
+  @@map("content_categories")
+}
+
+model ContentTag {
+  id        Int       @id @default(autoincrement())
+  content   Content   @relation(fields: [contentId], references: [id])
+  contentId String
+  tag       Tag       @relation(fields: [tagId], references: [id])
+  tagId     Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+
+  @@map("content_tags")
+}
+
+model ContentMedia {
+  id        Int       @id @default(autoincrement())
+  content   Content   @relation(fields: [contentId], references: [id])
+  contentId String
+  media     MediaFile @relation(fields: [mediaId], references: [id])
+  mediaId   Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+
+  @@map("content_media")
+}
