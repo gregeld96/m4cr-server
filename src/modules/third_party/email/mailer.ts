@@ -4,6 +4,7 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 const optionsSMTP : SMTPTransport.Options = {
   host: process.env.EMAIL_SMTP_HOST,
   port: Number(process.env.EMAIL_SMTP_PORT),
+  secure: false,
   auth: {
     user: process.env.EMAIL_SMTP_USERNAME,
     pass: process.env.EMAIL_SMTP_PASSWORD,
