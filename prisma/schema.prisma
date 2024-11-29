@@ -74,12 +74,52 @@ model MediaFile {
   profiles     User[]
   contents     Content[]
   medias       ContentMedia[]
+  followers    Follower[]
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime?      @map("updated_at")
   deletedAt    DateTime?      @map("deleted_at")
 
   @@index([id, name])
   @@map("media_files")
+}
+
+model Follower {
+  id             String         @id
+  email          String         @unique
+  password       String
+  firstName      String         @map("first_name")
+  lastName       String?        @map("last_name")
+  profilePhoto   MediaFile?     @relation(fields: [profilePhotoId], references: [id])
+  profilePhotoId Int?           @map("profile_photo_id")
+  gender         String?
+  phone          String?
+  socialMedia    String?        @map("social_media")
+  socialLink     String?        @map("social_link")
+  reference      String?
+  subscribeNews  Boolean        @default(true) @map("subscribe_news")
+  feedbacks      FeedbackForm[]
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime?      @map("updated_at")
+  deletedAt      DateTime?      @map("deleted_at")
+
+  @@index([email, id])
+  @@map("followers")
+}
+
+model FeedbackForm {
+  id         Int       @id @default(autoincrement())
+  type       String
+  follower   Follower? @relation(fields: [followerId], references: [id])
+  followerId String?   @map("follower_id")
+  images     String?
+  title      String?
+  content    String?   @db.Text
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  @@index([id])
+  @@map("feedback_forms")
 }
 
 model User {
