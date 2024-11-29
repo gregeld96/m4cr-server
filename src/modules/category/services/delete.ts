@@ -1,0 +1,36 @@
+import { PrismaClient } from '@prisma/client';
+
+import ValuesError from 'src/constants/values';
+import { internalServerError, prismaClientError, prismaNotFound } from 'src/constants/errors';
+
+const prisma = new PrismaClient();
+
+export const softDeleteCategory = async (id: number) => {
+    try {
+        await prisma.category.findFirstOrThrow({
+            where: {
+                id,
+                deletedAt: null,
+            },
+        });
+
+        await prisma.category.update({
+            where: {
+                id,
+            },
+            data: {
+                deletedAt: new Date(),
+
+            }
+        })
+    } catch (error: any) {
+        switch (error.name) {
+            case ValuesError.ErrorName.PRISMA_NOT_FOUND:
+                throw prismaNotFound(error);
+            case ValuesError.ErrorName.PRISMA_CLIENT_ERROR:
+                throw prismaClientError(error);
+            default:
+                throw internalServerError(error);
+        }
+    }
+}
