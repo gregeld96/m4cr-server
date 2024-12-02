@@ -1,0 +1,30 @@
+import { PrismaClient } from '@prisma/client';
+
+import ValuesError from 'src/constants/values';
+import { internalServerError, prismaClientError, prismaNotFound } from 'src/constants/errors';
+
+const prisma = new PrismaClient();
+
+export const getFollowerFeedbackFormDetail = async (followerId: string, id: number) => {
+    try {
+        const data = await prisma.feedbackForm.findFirstOrThrow({
+            where: {
+                followerId,
+                id,
+            },
+        });
+
+        return {
+            detail: data,
+        }
+    } catch (error: any) {
+        switch (error.name) {
+            case ValuesError.ErrorName.PRISMA_NOT_FOUND:
+                throw prismaNotFound(error);
+            case ValuesError.ErrorName.PRISMA_CLIENT_ERROR:
+                throw prismaClientError(error);
+            default:
+                throw internalServerError(error);
+        }
+    }
+}

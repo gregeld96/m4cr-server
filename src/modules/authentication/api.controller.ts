@@ -6,7 +6,6 @@ import { sendEmailForgotPasswordFollower } from "./services/follower_forgot_emai
 import { followerLogin } from "./services/follower_login";
 import { followerRegister } from "./services/follower_register";
 
-
 class AuthenticationApiController {
     static async login(req: Request, res: Response, next: NextFunction){
         try {

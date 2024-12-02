@@ -34,6 +34,7 @@ export const updateCategory = async (req: CreateCategoryDTO & { id: number }) =>
             },
             data: {
                 ...omit(req, ['id']),
+                updatedAt: new Date(),
 
             }
         })

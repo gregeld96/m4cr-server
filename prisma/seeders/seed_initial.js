@@ -28,7 +28,11 @@ async function main() {
             },
             {
                 id: uuidv7(),
-                name: 'admin',
+                name: 'admin content',
+            },
+            {
+                id: uuidv7(),
+                name: 'admin geospatial',
             }
         ]
     });
@@ -74,6 +78,28 @@ async function main() {
             },
         ]
     });
+
+    await prisma.tag.createMany({
+        data: [
+            {
+                name: 'forest',
+            },
+            {
+                name: 'rare species',
+            }
+        ]
+    });
+
+    await prisma.category.createMany({
+        data: [
+            {
+                name: 'newsletter',
+            },
+            {
+                name: 'blog',
+            },
+        ]
+    })
 }
 
 main()

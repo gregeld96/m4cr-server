@@ -62,22 +62,23 @@ model Permission {
 }
 
 model MediaFile {
-  id           Int            @id @default(autoincrement())
-  name         String
-  description  String?        @db.Text()
-  mimetype     String
-  category     String
-  locationFile String         @map("location_file")
-  size         String?
-  width        String?
-  height       String?
-  profiles     User[]
-  contents     Content[]
-  medias       ContentMedia[]
-  followers    Follower[]
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime?      @map("updated_at")
-  deletedAt    DateTime?      @map("deleted_at")
+  id            Int                 @id @default(autoincrement())
+  name          String
+  description   String?             @db.Text()
+  mimetype      String
+  category      String
+  locationFile  String              @map("location_file")
+  size          String?
+  width         String?
+  height        String?
+  profiles      User[]
+  contents      Content[]
+  medias        ContentMedia[]
+  followers     Follower[]
+  feedbackforms FeedbackFormMedia[]
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime?           @map("updated_at")
+  deletedAt     DateTime?           @map("deleted_at")
 
   @@index([id, name])
   @@map("media_files")
@@ -107,19 +108,40 @@ model Follower {
 }
 
 model FeedbackForm {
-  id         Int       @id @default(autoincrement())
+  id         Int                 @id @default(autoincrement())
   type       String
-  follower   Follower? @relation(fields: [followerId], references: [id])
-  followerId String?   @map("follower_id")
-  images     String?
+  follower   Follower?           @relation(fields: [followerId], references: [id])
+  followerId String?             @map("follower_id")
+  province   String?
+  city       String?
+  district   String?
+  urban      String?
+  latitude   Float?
+  longitude  Float?
+  link       String?
   title      String?
-  content    String?   @db.Text
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime? @map("updated_at")
-  deletedAt  DateTime? @map("deleted_at")
+  content    String?             @db.Text
+  isRead     Boolean             @default(false) @map("is_read")
+  images     FeedbackFormMedia[]
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime?           @map("updated_at")
+  deletedAt  DateTime?           @map("deleted_at")
 
   @@index([id])
   @@map("feedback_forms")
+}
+
+model FeedbackFormMedia {
+  id        Int          @id @default(autoincrement())
+  form      FeedbackForm @relation(fields: [formId], references: [id])
+  formId    Int          @map("follower_id")
+  media     MediaFile    @relation(fields: [mediaId], references: [id])
+  mediaId   Int
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime?    @map("updated_at")
+
+  @@index([id])
+  @@map("feedback_form_medias")
 }
 
 model User {
@@ -168,9 +190,14 @@ model Tag {
 model Content {
   id          String            @id
   type        String?
+  title       String
+  excerpt     String?
+  slug        String?
   body        String?           @db.Text()
-  thumbnail   MediaFile         @relation(fields: [thumbnailId], references: [id])
-  thumbnailId Int               @map("thumbnail_id")
+  bodyHtml    String?           @map("body_html") @db.Text()
+  link        String?
+  thumbnail   MediaFile?        @relation(fields: [thumbnailId], references: [id])
+  thumbnailId Int?              @map("thumbnail_id")
   status      Status            @relation(fields: [statusId], references: [id])
   statusId    Int               @map("status_id")
   author      User?             @relation(fields: [authorId], references: [id])
@@ -178,6 +205,10 @@ model Content {
   categories  ContentCategory[]
   tags        ContentTag[]
   medias      ContentMedia[]
+  seoTitleId  String?           @map("seo_title_id")
+  seoDescId   String?           @map("seo_desc_id")
+  seoTitleEn  String?           @map("seo_title_en")
+  seoDescEn   String?           @map("seo_desc_en")
   createdAt   DateTime          @default(now()) @map("created_at")
   updatedAt   DateTime?         @map("updated_at")
   deletedAt   DateTime?         @map("deleted_at")
@@ -219,4 +250,49 @@ model ContentMedia {
   updatedAt DateTime? @map("updated_at")
 
   @@map("content_media")
+}
+
+model Province {
+  id        String @id
+  name      String
+  latitude  Float
+  longitude Float
+  cities    City[]
+
+  @@map("provinces")
+}
+
+model City {
+  id         String     @id
+  province   Province   @relation(fields: [provinceId], references: [id])
+  provinceId String     @map("province_id")
+  name       String
+  latitude   Float
+  longitude  Float
+  districts  District[]
+
+  @@map("cities")
+}
+
+model District {
+  id        String  @id
+  city      City    @relation(fields: [regencyId], references: [id])
+  regencyId String  @map("regency_id")
+  name      String
+  latitude  Float
+  longitude Float
+  urbans    Urban[]
+
+  @@map("districts")
+}
+
+model Urban {
+  id         String   @id
+  district   District @relation(fields: [districtId], references: [id])
+  districtId String   @map("district_id")
+  name       String
+  latitude   Float
+  longitude  Float
+
+  @@map("urbans")
 }
