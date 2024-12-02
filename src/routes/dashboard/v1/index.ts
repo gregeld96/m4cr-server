@@ -4,6 +4,10 @@ import MasterSettingInternalRoutes from './master_setting';
 import UserInternalRoutes from './user';
 import CategoryRoutes from './category';
 import TagRoutes from './tag';
+import ContentRoutes from './content';
+import UploadRoutes from './upload';
+import FormRoutes from './form';
+
 import { authAdmin } from "src/middlewares/authentication";
 const routes = Router();
 
@@ -13,5 +17,8 @@ routes.use('/master-settings', MasterSettingInternalRoutes);
 routes.use('/users', UserInternalRoutes);
 routes.use('/categories', CategoryRoutes);
 routes.use('/tags', TagRoutes);
+routes.use('/contents', ContentRoutes);
+routes.use('/uploads', UploadRoutes);
+routes.use('/forms', FormRoutes);
 
 export default routes;

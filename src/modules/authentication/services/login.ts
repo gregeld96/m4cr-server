@@ -47,7 +47,8 @@ export const accountLogin = async (payload: AuthLoginDTO) => {
                 firstName: existEmail.firstName,
                 lastName: existEmail.lastName,
                 email: existEmail.email,
-                role: existEmail.role,
+                role: existEmail.role.name,
+                permissions: existEmail.role.permissions,
             }
         }
     } catch (error: any) {

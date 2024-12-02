@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { validateData } from "src/middlewares/zod_validation";
-import AuthenticationAdminController from "src/modules/authentication/admin.controller";
 import AuthenticationApiController from "src/modules/authentication/api.controller";
 import { authForgotPasswordSchema, authForgotVerificationSchema, authLoginSchema, authRegisterSchema } from "src/validator/authentication";
 

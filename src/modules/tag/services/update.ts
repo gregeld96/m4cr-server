@@ -34,6 +34,7 @@ export const updateTag = async (req: CreateTagDTO & { id: number }) => {
             },
             data: {
                 ...omit(req, ['id']),
+                updatedAt: new Date(),
 
             }
         })

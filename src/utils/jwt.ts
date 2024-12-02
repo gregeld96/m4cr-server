@@ -33,10 +33,15 @@ function verifyTokenForgot (token: string){
     return jwt.verify(token, JWT_KEY_FORGOT || '');
 }
 
+function verifyTokenFollower (token: string){
+    return jwt.verify(token, JWT_KEY_FOLLOWER || '');
+}
+
 export {
     generateToken,
     generateTokenForgot,
     generateTokenFollower,
     verifyToken,
     verifyTokenForgot,
+    verifyTokenFollower,
 };
