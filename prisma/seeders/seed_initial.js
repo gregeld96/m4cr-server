@@ -20,6 +20,7 @@ async function main() {
     await prisma.status.deleteMany({});
 
     const roleId = uuidv7();
+    const statusId = 1;
 
     await prisma.role.createMany({
         data: [{
@@ -38,19 +39,24 @@ async function main() {
     });
 
     await prisma.status.createMany({
-        data: [{
+        data: [
+            {
+                id: statusId,
                 name: 'active',
                 category: 'account',
             },
             {
+                id: 2,
                 name: 'in-active',
                 category: 'account'
             },
             {
+                id: 3,
                 name: 'draft',
                 category: 'content',
             },
             {
+                id: 4,
                 name: 'publish',
                 category: 'content'
             }
@@ -65,7 +71,7 @@ async function main() {
                 email: 'binausaha@gmail.com',
                 password: hashPassword("admin"),
                 roleId: roleId,
-                statusId: 1,
+                statusId: statusId,
             },
             {
                 id: uuidv7(),
@@ -74,7 +80,7 @@ async function main() {
                 email: 'gregeld96@gmail.com',
                 password: hashPassword("admin"),
                 roleId: roleId,
-                statusId: 1,
+                statusId: statusId,
             },
         ]
     });
