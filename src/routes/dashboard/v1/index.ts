@@ -7,6 +7,10 @@ import TagRoutes from './tag';
 import ContentRoutes from './content';
 import UploadRoutes from './upload';
 import FormRoutes from './form';
+import SpeciesRoutes from './species';
+import BiodiversityRoutes from './biodiversity';
+import ConservationRoutes from './conservation';
+import MangroveRoutes from './mangrove';
 
 import { authAdmin } from "src/middlewares/authentication";
 const routes = Router();
@@ -20,5 +24,9 @@ routes.use('/tags', TagRoutes);
 routes.use('/contents', ContentRoutes);
 routes.use('/uploads', UploadRoutes);
 routes.use('/forms', FormRoutes);
+routes.use('/biodiversities', BiodiversityRoutes);
+routes.use('/specieses', SpeciesRoutes);
+routes.use('/conservations', ConservationRoutes);
+routes.use('/mangroves', MangroveRoutes);
 
 export default routes;
