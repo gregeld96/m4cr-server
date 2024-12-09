@@ -62,23 +62,28 @@ model Permission {
 }
 
 model MediaFile {
-  id            Int                 @id @default(autoincrement())
-  name          String
-  description   String?             @db.Text()
-  mimetype      String
-  category      String
-  locationFile  String              @map("location_file")
-  size          String?
-  width         String?
-  height        String?
-  profiles      User[]
-  contents      Content[]
-  medias        ContentMedia[]
-  followers     Follower[]
-  feedbackforms FeedbackFormMedia[]
-  createdAt     DateTime            @default(now()) @map("created_at")
-  updatedAt     DateTime?           @map("updated_at")
-  deletedAt     DateTime?           @map("deleted_at")
+  id             Int                  @id @default(autoincrement())
+  name           String
+  description    String?              @db.Text()
+  mimetype       String
+  category       String
+  locationFile   String               @map("location_file")
+  size           String?
+  width          String?
+  height         String?
+  profiles       User[]
+  contents       Content[]
+  medias         ContentMedia[]
+  followers      Follower[]
+  feedbackforms  FeedbackFormMedia[]
+  species        Species[]
+  biodiversities BioDiversity[]
+  humanActivites HumanActivityImage[]
+  ntfps          NtfpImages[]
+  panoleses      MangrovePanolense[]
+  createdAt      DateTime             @default(now()) @map("created_at")
+  updatedAt      DateTime?            @map("updated_at")
+  deletedAt      DateTime?            @map("deleted_at")
 
   @@index([id, name])
   @@map("media_files")
@@ -295,4 +300,194 @@ model Urban {
   longitude  Float
 
   @@map("urbans")
+}
+
+model ConservationStatus {
+  id             Int                    @id @default(autoincrement())
+  name           String
+  type           String                 @default("location")
+  description    String?                @db.Text
+  color          String?
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime?              @map("updated_at")
+  deletedAt      DateTime?              @map("deleted_at")
+  location       MangroveLocation[]
+  species        MangroveSpecies[]
+  biodiversities MangroveBioDiversity[]
+
+  @@map("conservation_statuses")
+}
+
+model Species {
+  id             Int               @id @default(autoincrement())
+  commonName     String            @map("common_name")
+  scientificName String            @map("scientific_name")
+  description    String?           @db.Text
+  image          MediaFile?        @relation(fields: [imageId], references: [id])
+  imageId        Int?              @map("image_id")
+  mangroves      MangroveSpecies[]
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime?         @map("updated_at")
+  deletedAt      DateTime?         @map("deleted_at")
+
+  @@map("species")
+}
+
+model BioDiversity {
+  id             Int                    @id @default(autoincrement())
+  commonName     String                 @map("common_name")
+  scientificName String                 @map("scientific_name")
+  type           String
+  description    String?                @db.Text
+  image          MediaFile?             @relation(fields: [imageId], references: [id])
+  imageId        Int?                   @map("image_id")
+  mangroves      MangroveBioDiversity[]
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime?              @map("updated_at")
+  deletedAt      DateTime?              @map("deleted_at")
+
+  @@map("biodiversities")
+}
+
+model MangroveSpecies {
+  id              Int                @id @default(autoincrement())
+  species         Species            @relation(fields: [speciesId], references: [id])
+  speciesId       Int                @map("species_id")
+  location        MangroveLocation   @relation(fields: [locationId], references: [id])
+  locationId      Int                @map("location_id")
+  status          String?
+  year            Int?
+  totalPopulation Int?               @map("total_population")
+  conservation    ConservationStatus @relation(fields: [conservationId], references: [id])
+  conservationId  Int
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime?          @map("updated_at")
+
+  @@map("mangrove_specieses")
+}
+
+model MangroveBioDiversity {
+  id              Int                @id @default(autoincrement())
+  biodiversity    BioDiversity       @relation(fields: [bioId], references: [id])
+  bioId           Int                @map("bio_id")
+  location        MangroveLocation   @relation(fields: [locationId], references: [id])
+  locationId      Int                @map("location_id")
+  status          String?
+  year            Int?
+  totalPopulation Int?               @map("total_population")
+  conservation    ConservationStatus @relation(fields: [conservationId], references: [id])
+  conservationId  Int                @map("conservation_id")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime?          @map("updated_at")
+
+  @@map("mangrove_biodiversities")
+}
+
+model MangroveLocation {
+  id                 Int                      @id @default(autoincrement())
+  name               String
+  description        String?                  @db.Text
+  area               String?
+  latitude           Float?
+  longitude          Float?
+  province           String?
+  city               String?
+  district           String?
+  urban              String
+  conservationStatus ConservationStatus?      @relation(fields: [conservationId], references: [id])
+  conservationId     Int?                     @map("conservation_id")
+  species            MangroveSpecies[]
+  biodiversities     MangroveBioDiversity[]
+  humanActivities    HumanActivity[]
+  ntfps              NonTimberForestProduct[]
+  panolenses         MangrovePanolense[]
+  boundary           MangroveBoundary?
+  createdAt          DateTime                 @default(now()) @map("created_at")
+  updatedAt          DateTime?                @map("updated_at")
+  deletedAt          DateTime?                @map("deleted_at")
+
+  @@map("mangrove_locations")
+}
+
+model HumanActivityImage {
+  id         Int           @id @default(autoincrement())
+  activity   HumanActivity @relation(fields: [activityId], references: [id])
+  activityId Int           @map("activity_id")
+  image      MediaFile     @relation(fields: [imageId], references: [id])
+  imageId    Int           @map("image_id")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  updatedAt  DateTime?     @map("updated_at")
+
+  @@map("human_activity_images")
+}
+
+model HumanActivity {
+  id          Int                  @id @default(autoincrement())
+  name        String
+  description String?              @db.Text
+  images      HumanActivityImage[]
+  location    MangroveLocation     @relation(fields: [locationId], references: [id])
+  locationId  Int                  @map("location_id")
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime?            @map("updated_at")
+  deletedAt   DateTime?            @map("deleted_at")
+
+  @@map("human_activities")
+}
+
+model NtfpImages {
+  id        Int                    @id @default(autoincrement())
+  ntfp      NonTimberForestProduct @relation(fields: [ntfpId], references: [id])
+  ntfpId    Int                    @map("ntfp_id")
+  image     MediaFile              @relation(fields: [imageId], references: [id])
+  imageId   Int                    @map("image_id")
+  createdAt DateTime               @default(now()) @map("created_at")
+  updatedAt DateTime?              @map("updated_at")
+  deletedAt DateTime?              @map("deleted_at")
+
+  @@map("ntfp_images")
+}
+
+model NonTimberForestProduct {
+  id             Int              @id @default(autoincrement())
+  localName      String           @map("local_name")
+  scientificName String           @map("scientific_name")
+  type           String?
+  commodityType  String?          @map("commodity_type")
+  product        String           @db.Text
+  description    String?          @db.Text
+  images         NtfpImages[]
+  location       MangroveLocation @relation(fields: [locationId], references: [id])
+  locationId     Int              @map("location_id")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime?        @map("updated_at")
+  deletedAt      DateTime?        @map("deleted_at")
+
+  @@map("ntfp")
+}
+
+model MangroveBoundary {
+  id         Int               @id @default(autoincrement())
+  type       String
+  geometry   String            @db.Text
+  location   MangroveLocation? @relation(fields: [locationId], references: [id])
+  locationId Int               @map("location_id") @unique
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime?         @map("updated_at")
+
+  @@map("mangrove_boundaries")
+}
+
+model MangrovePanolense {
+  id             Int              @id @default(autoincrement())
+  positionNumber Int              @map("position_number")
+  positionLink   String           @map("position_link")
+  image          MediaFile        @relation(fields: [imageId], references: [id])
+  imageId        Int              @map("image_id")
+  location       MangroveLocation @relation(fields: [locationId], references: [id])
+  locationId     Int              @map("location_id")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime?        @map("updated_at")
+
+  @@map("mangrove_panolense")
 }

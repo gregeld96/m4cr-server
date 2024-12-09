@@ -99,7 +99,7 @@ async function main() {
                 name: 'blog',
             },
         ]
-    })
+    });
 }
 
 main()
