@@ -15,13 +15,13 @@ export const getSpeciesList = async (filter: GetSpeciesListFilterDTO) => {
             OR: [
                 {
                     commonName: {
-                        contains: name,
+                        contains: name ?? '',
                         mode: 'insensitive',
                     },
                 },
                 {
                     scientificName: {
-                        contains: name,
+                        contains: name ?? '',
                         mode: 'insensitive',
                     },
                 }
