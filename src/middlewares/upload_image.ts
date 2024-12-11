@@ -4,7 +4,7 @@ import fs from 'fs';
 
 const generalStorage = multer.diskStorage({
     destination: function (req: Request, file: any, cb: any) {
-        const folder = `./src/public/${file.fieldname.replace('_', '-')}`;
+        const folder = `${process.env.PRODUCTION_PUBLIC_FOLDER}/${file.fieldname.replace('_', '-')}`;
 
         if (folder) {
             if (!fs.existsSync(folder)) {
