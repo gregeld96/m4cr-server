@@ -11,6 +11,7 @@ import SpeciesRoutes from './species';
 import BiodiversityRoutes from './biodiversity';
 import ConservationRoutes from './conservation';
 import MangroveRoutes from './mangrove';
+import AnalyticsRoutes from './analytics';
 
 import { authAdmin } from "src/middlewares/authentication";
 const routes = Router();
@@ -28,5 +29,6 @@ routes.use('/biodiversities', BiodiversityRoutes);
 routes.use('/specieses', SpeciesRoutes);
 routes.use('/conservations', ConservationRoutes);
 routes.use('/mangroves', MangroveRoutes);
+routes.use('/analytics', AnalyticsRoutes);
 
 export default routes;

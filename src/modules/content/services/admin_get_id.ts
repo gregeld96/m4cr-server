@@ -15,9 +15,25 @@ export const getAdminContentDetailId = async (id: string) => {
             include: {
                 thumbnail: true,
                 status: true,
-                medias: true,
-                categories: true,
-                tags: true,
+                medias: {
+                    include: {
+                        media: true
+                    }
+                },
+                categories: {
+                    include: {
+                        category: {
+                            include: {
+                                
+                            }
+                        },
+                    }
+                },
+                tags: {
+                    include: {
+                        tag: true,
+                    }
+                },
                 author: {
                     select: {
                         id: true,

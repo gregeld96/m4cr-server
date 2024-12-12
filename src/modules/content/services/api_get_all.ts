@@ -4,7 +4,6 @@ import ValuesError from 'src/constants/values';
 import { internalServerError, prismaClientError, prismaNotFound } from 'src/constants/errors';
 import { GetContentListFilterDTO } from 'src/validator/content';
 import { generatePaginationValue } from 'src/utils/pagination_and_filter';
-import status from 'src/constants/status';
 
 const prisma = new PrismaClient();
 
@@ -106,6 +105,12 @@ export const getAllContent = async (filter: GetContentListFilterDTO) => {
             where: whereOptions,
             orderBy: sortOption,
             include: {
+                author: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                    }
+                },
                 categories: {
                     select: {
                         category: {

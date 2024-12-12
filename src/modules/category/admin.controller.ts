@@ -5,6 +5,7 @@ import { getCategories } from "./services/all";
 import { createCategory } from "./services/create";
 import { updateCategory } from "./services/update";
 import { softDeleteCategory } from "./services/delete";
+import { getDetailCategory } from "./services/detail";
 
 
 class CategoryAdminController {
@@ -13,6 +14,16 @@ class CategoryAdminController {
             const data = await getCategories();
 
             response(res, ResStatus.SUCCESS, true, data, 'Success get categories');
+        } catch(err) {
+            next(err)
+        }
+    }
+
+    static async getDetail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await getDetailCategory(Number(req.params.id));
+
+            response(res, ResStatus.SUCCESS, true, data, 'Success get detail category');
         } catch(err) {
             next(err)
         }

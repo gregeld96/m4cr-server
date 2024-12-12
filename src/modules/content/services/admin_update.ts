@@ -84,7 +84,7 @@ export const updateContentAdmin = async (req: CreateContentDTO & { authorId: str
 
             categories = categoriesExist.map((category: any) => {
                 return {
-                    tagId: category.id,
+                    categoryId: category.id,
                     contentId: req.id,
                 }
             });

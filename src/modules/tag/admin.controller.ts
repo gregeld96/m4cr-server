@@ -5,6 +5,7 @@ import { getTags } from "./services/all";
 import { createTag } from "./services/create";
 import { updateTag } from "./services/update";
 import { softDeleteTag } from "./services/delete";
+import { getDetailTag } from "./services/detail";
 
 
 class TagAdminController {
@@ -13,6 +14,16 @@ class TagAdminController {
             const data = await getTags();
 
             response(res, ResStatus.SUCCESS, true, data, 'Success get tags');
+        } catch(err) {
+            next(err)
+        }
+    }
+
+    static async getDetail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await getDetailTag(Number(req.params.id));
+
+            response(res, ResStatus.SUCCESS, true, data, 'Success get detail tag');
         } catch(err) {
             next(err)
         }
