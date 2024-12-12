@@ -105,6 +105,7 @@ export const getAllContent = async (filter: GetContentListFilterDTO) => {
             where: whereOptions,
             orderBy: sortOption,
             include: {
+                thumbnail: true,
                 author: {
                     select: {
                         firstName: true,
