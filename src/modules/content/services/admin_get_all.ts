@@ -110,6 +110,7 @@ export const getAllContentAdmin = async (filter: GetContentListFilterDTO & { aut
             where: whereOptions,
             orderBy: sortOption,
             include: {
+                thumbnail: true,
                 categories: {
                     select: {
                         category: {
