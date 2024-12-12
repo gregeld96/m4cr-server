@@ -11,8 +11,9 @@
     "start": "node dist/src",
     "dev": "nodemon src/index.ts",
     "migrate-deploy": "npx prisma migrate deploy && npx prisma generate",
-    "seed-init": "node prisma/seeders/seed_initial.js",
-    "seed-address": "node prisma/seeders/seed_address.js"
+    "seed-init": "node prisma/seeders/seed_initial.js && node prisma/seeders/seed_address.js",
+    "seed-address": "node prisma/seeders/seed_address.js",
+    "seed-follower": "node prisma/seeders/seed_follower_dummy.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

@@ -6,6 +6,7 @@ import { createContentSchema, getContentListFilterSchema } from "src/validator/c
 const ContentRoutes = Router();
 
 ContentRoutes.get('/', validateData(getContentListFilterSchema), ContentAdminController.getAll);
+ContentRoutes.get('/:id', ContentAdminController.getDetail);
 ContentRoutes.post('/', validateData(createContentSchema), ContentAdminController.create);
 ContentRoutes.put('/:id', validateData(createContentSchema), ContentAdminController.update);
 ContentRoutes.delete('/:id', ContentAdminController.softDelete);
