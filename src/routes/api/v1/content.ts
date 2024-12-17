@@ -9,5 +9,4 @@ ContentRoutes.get('/', validateData(getContentListFilterSchema), ContentApiContr
 ContentRoutes.get('/seo/:slug', ContentApiController.getDetailSeo);
 ContentRoutes.get('/:slug', ContentApiController.getDetailSlug);
 
-
 export default ContentRoutes;

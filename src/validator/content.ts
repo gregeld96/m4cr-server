@@ -48,6 +48,41 @@ export const createContentSchema = z.object({
 })
 export type CreateContentDTO = z.infer<typeof createContentSchema>;
 
+export const createFollowerContentSchema = z.object({
+    title: GenerateZodType.trimmedString('title'),
+    type: GenerateZodType.trimmedString('type'),
+    excerpt: GenerateZodType.trimmedStringOptional('excerpt').nullable(),
+    body: GenerateZodType.trimmedStringOptional('body').nullable(),
+    bodyHtml: GenerateZodType.trimmedStringOptional('bodyHtml').nullable(),
+    thumbnailId: z.number().nullable(),
+    link: GenerateZodType.trimmedStringOptional('link').nullable(),
+    categoriesId: z.
+        array(
+            idProperty,
+            {
+                message: "categories is array of object with id properties",
+            }
+        )
+        .nullable(),
+    tagsId: z.
+        array(
+            idProperty,
+            {
+                message: "tags is array of object with id properties",
+            }
+        )
+        .nullable(),
+    mediaGalleryId: z.
+        array(
+            idProperty,
+            {
+                message: "gallery is array of object with id properties",
+            }
+        )
+        .nullable(),
+})
+export type CreateFollowerContentDTO = z.infer<typeof createFollowerContentSchema>;
+
 export const getContentListFilterSchema =
   generatePaginationSchema({
     sortByEnum: ContentListFilterSort,

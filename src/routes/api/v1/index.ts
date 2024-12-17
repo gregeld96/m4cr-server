@@ -9,6 +9,7 @@ import MasterSettingRoutes from "./master_setting";
 import SpeciesRoutes from "./species";
 import BiodiversityRoutes from "./biodiversity";
 import MangroveRoutes from "./mangrove";
+import ArticleRoutes from "./articles";
 
 import { authFollower } from "src/middlewares/authentication";
 
@@ -26,6 +27,7 @@ routes.use('/mangroves', MangroveRoutes);
 routes.use(authFollower);
 routes.use('/uploads', UploadRoutes);
 routes.use('/forms', FormRoutes);
+routes.use('/articles', ArticleRoutes);
 
 
 export default routes;

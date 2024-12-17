@@ -4,25 +4,15 @@ import ValuesError from 'src/constants/values';
 import { internalServerError, prismaClientError, prismaNotFound } from 'src/constants/errors';
 import { GetContentListFilterDTO } from 'src/validator/content';
 import { generatePaginationValue } from 'src/utils/pagination_and_filter';
-import moment from 'moment';
 
 const prisma = new PrismaClient();
 
-export const getAllContentAdmin = async (filter: GetContentListFilterDTO & { authorId: string, authorRole: string }) => {
-    const { authorId, title, tags, categories, sortBy, limit, currentPage, authorRole, createdAt, type, status } = filter;
+export const getAllContentFollowerSubmissionAdmin = async (filter: GetContentListFilterDTO) => {
+    const { title, tags, categories, sortBy, limit, currentPage, createdAt, status, type } = filter;
 
     try {
         const tagSelected: any = [];
         const categorySelected: any = [];
-        const statusSelected = status ? await prisma.status.findFirst({
-            where: {
-                name: {
-                    equals: status,
-                    mode: 'insensitive',
-                },
-                category: 'content',
-            }
-        }) : null;
 
         if (tags && tags.split(',').length > 0) {
             const tagList = tags.split(',');
@@ -54,64 +44,63 @@ export const getAllContentAdmin = async (filter: GetContentListFilterDTO & { aut
                     }
                 });
 
-                if (categoryExist) categorySelected.push(categoryExist.id);
+                if (categoryExist) tagSelected.push(categoryExist.id);
             }
         }
 
-        const whereOptions: Prisma.ContentWhereInput = {
+        const whereOptions: Prisma.FollowerContentWhereInput = {
             deletedAt: null,
             title: {
                 contains: title,
                 mode: 'insensitive',
             },
-            type: type ? {
-                equals: type ,
+            status: status ? status : undefined,
+            type: {
+                equals: type ? type : 'content',
                 mode: 'insensitive',
-            } : undefined,
-            statusId : statusSelected ? statusSelected.id : undefined,
+            },
             categories: categorySelected.length > 0 ? {
                 every: {
-                    categoryId: {
+                    id: {
                         in: categorySelected,
                     }
                 }
             } : undefined,
             tags: tagSelected.length > 0 ? {
                 every: {
-                    tagId: {
+                    id: {
                         in: tagSelected,
                     }
                 }
             } : undefined,
-            authorId: ['superadmin', 'admin content'].includes(authorRole.toLowerCase()) ? undefined : {
-                equals: authorId,
-            },
-            createdAt: createdAt ? {
-                gte: moment(createdAt).format(),
-                lte: moment(`${createdAt}T23:59:59`).format()
-            } : undefined,
+            createdAt: createdAt ? new Date(createdAt) : undefined,
         }
 
-        const totalCount = await prisma.content.count({ where: whereOptions })
+        const totalCount = await prisma.followerContent.count({ where: whereOptions })
 
         const { skip, take, totalPage } = generatePaginationValue({ limit, currentPage, totalCount })
 
-        const sortOption: Prisma.ContentOrderByWithRelationInput = {}
+        const sortOption: Prisma.FollowerContentOrderByWithRelationInput = {}
 
         if (sortBy) {
             const sort = sortBy.startsWith('-') ? 'desc' : 'asc';
-            const sortField = (sortBy.startsWith('-') ? sortBy.substring(1) : sortBy) as keyof Prisma.ContentOrderByWithRelationInput;
+            const sortField = (sortBy.startsWith('-') ? sortBy.substring(1) : sortBy) as keyof Prisma.FollowerContentOrderByWithRelationInput;
 
             sortOption[sortField] = sort;
         }
 
 
-        const items = await prisma.content.findMany({
+        const items = await prisma.followerContent.findMany({
             where: whereOptions,
             orderBy: sortOption,
             include: {
                 thumbnail: true,
-                status: true,
+                author: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                    }
+                },
                 categories: {
                     select: {
                         category: {
@@ -130,22 +119,6 @@ export const getAllContentAdmin = async (filter: GetContentListFilterDTO & { aut
                                 name: true,
                             }
                         }
-                    }
-                },
-                medias: {
-                    select: {
-                        media: {
-                            select: {
-                                id: true,
-                                locationFile: true,
-                                mimetype: true,
-                                name: true,
-                                description: true,
-                                size: true,
-                            }
-                            
-                        }
-                        
                     }
                 }
             },

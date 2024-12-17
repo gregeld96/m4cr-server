@@ -62,54 +62,116 @@ model Permission {
 }
 
 model MediaFile {
-  id             Int                  @id @default(autoincrement())
-  name           String
-  description    String?              @db.Text()
-  mimetype       String
-  category       String
-  locationFile   String               @map("location_file")
-  size           String?
-  width          String?
-  height         String?
-  profiles       User[]
-  contents       Content[]
-  medias         ContentMedia[]
-  followers      Follower[]
-  feedbackforms  FeedbackFormMedia[]
-  species        Species[]
-  biodiversities BioDiversity[]
-  humanActivites HumanActivityImage[]
-  ntfps          NtfpImages[]
-  panoleses      MangrovePanolense[]
-  createdAt      DateTime             @default(now()) @map("created_at")
-  updatedAt      DateTime?            @map("updated_at")
-  deletedAt      DateTime?            @map("deleted_at")
+  id                    Int                    @id @default(autoincrement())
+  name                  String
+  description           String?                @db.Text()
+  mimetype              String
+  category              String
+  locationFile          String                 @map("location_file")
+  size                  String?
+  width                 String?
+  height                String?
+  profiles              User[]
+  contents              Content[]
+  medias                ContentMedia[]
+  followers             Follower[]
+  feedbackforms         FeedbackFormMedia[]
+  species               Species[]
+  biodiversities        BioDiversity[]
+  humanActivites        HumanActivityImage[]
+  ntfps                 NtfpImages[]
+  panoleses             MangrovePanolense[]
+  followerContent       FollowerContent[]
+  followerContentMedias FollowerContentMedia[]
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime?              @map("updated_at")
+  deletedAt             DateTime?              @map("deleted_at")
 
   @@index([id, name])
   @@map("media_files")
 }
 
 model Follower {
-  id             String         @id
-  email          String         @unique
+  id             String            @id
+  email          String            @unique
   password       String
-  firstName      String         @map("first_name")
-  lastName       String?        @map("last_name")
-  profilePhoto   MediaFile?     @relation(fields: [profilePhotoId], references: [id])
-  profilePhotoId Int?           @map("profile_photo_id")
+  firstName      String            @map("first_name")
+  lastName       String?           @map("last_name")
+  profilePhoto   MediaFile?        @relation(fields: [profilePhotoId], references: [id])
+  profilePhotoId Int?              @map("profile_photo_id")
   gender         String?
   phone          String?
-  socialMedia    String?        @map("social_media")
-  socialLink     String?        @map("social_link")
+  socialMedia    String?           @map("social_media")
+  socialLink     String?           @map("social_link")
   reference      String?
-  subscribeNews  Boolean        @default(true) @map("subscribe_news")
+  subscribeNews  Boolean           @default(true) @map("subscribe_news")
   feedbacks      FeedbackForm[]
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime?      @map("updated_at")
-  deletedAt      DateTime?      @map("deleted_at")
+  contents       FollowerContent[]
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime?         @map("updated_at")
+  deletedAt      DateTime?         @map("deleted_at")
 
   @@index([email, id])
   @@map("followers")
+}
+
+model FollowerContent {
+  id          Int                       @id @default(autoincrement())
+  type        String?
+  title       String
+  excerpt     String?
+  body        String?                   @db.Text()
+  bodyHtml    String?                   @map("body_html") @db.Text()
+  link        String?
+  status      String                    @default("In Review")
+  thumbnail   MediaFile?                @relation(fields: [thumbnailId], references: [id])
+  thumbnailId Int?                      @map("thumbnail_id")
+  author      Follower                  @relation(fields: [authorId], references: [id])
+  authorId    String                    @map("author_id")
+  categories  FollowerContentCategory[]
+  tags        FollowerContentTag[]
+  medias      FollowerContentMedia[]
+  createdAt   DateTime                  @default(now()) @map("created_at")
+  updatedAt   DateTime?                 @map("updated_at")
+  deletedAt   DateTime?                 @map("deleted_at")
+
+  @@map("follower_contents")
+}
+
+model FollowerContentCategory {
+  id         Int             @id @default(autoincrement())
+  content    FollowerContent @relation(fields: [contentId], references: [id])
+  contentId  Int
+  category   Category        @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime?       @map("updated_at")
+
+  @@map("follower_content_categories")
+}
+
+model FollowerContentTag {
+  id        Int             @id @default(autoincrement())
+  content   FollowerContent @relation(fields: [contentId], references: [id])
+  contentId Int
+  tag       Tag             @relation(fields: [tagId], references: [id])
+  tagId     Int
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime?       @map("updated_at")
+
+  @@map("follower_content_tags")
+}
+
+model FollowerContentMedia {
+  id        Int             @id @default(autoincrement())
+  content   FollowerContent @relation(fields: [contentId], references: [id])
+  contentId Int
+  media     MediaFile       @relation(fields: [mediaId], references: [id])
+  mediaId   Int
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime?       @map("updated_at")
+
+  @@map("follower_content_media")
 }
 
 model FeedbackForm {
@@ -171,23 +233,25 @@ model User {
 }
 
 model Category {
-  id        Int               @id @default(autoincrement())
-  name      String
-  content   ContentCategory[]
-  createdAt DateTime          @default(now()) @map("created_at")
-  updatedAt DateTime?         @map("updated_at")
-  deletedAt DateTime?         @map("deleted_at")
+  id              Int                       @id @default(autoincrement())
+  name            String
+  content         ContentCategory[]
+  followerContent FollowerContentCategory[]
+  createdAt       DateTime                  @default(now()) @map("created_at")
+  updatedAt       DateTime?                 @map("updated_at")
+  deletedAt       DateTime?                 @map("deleted_at")
 
   @@map("categories")
 }
 
 model Tag {
-  id        Int          @id @default(autoincrement())
-  name      String
-  content   ContentTag[]
-  createdAt DateTime     @default(now()) @map("created_at")
-  updatedAt DateTime?    @map("updated_at")
-  deletedAt DateTime?    @map("deleted_at")
+  id              Int                  @id @default(autoincrement())
+  name            String
+  content         ContentTag[]
+  followerContent FollowerContentTag[]
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime?            @map("updated_at")
+  deletedAt       DateTime?            @map("deleted_at")
 
   @@map("tags")
 }
@@ -210,6 +274,7 @@ model Content {
   categories  ContentCategory[]
   tags        ContentTag[]
   medias      ContentMedia[]
+  count       ContentAnalytic[]
   seoTitleId  String?           @map("seo_title_id")
   seoDescId   String?           @map("seo_desc_id")
   seoTitleEn  String?           @map("seo_title_en")
@@ -219,6 +284,16 @@ model Content {
   deletedAt   DateTime?         @map("deleted_at")
 
   @@map("contents")
+}
+
+model ContentAnalytic {
+  id        Int       @id @default(autoincrement())
+  content   Content   @relation(fields: [contentId], references: [id])
+  contentId String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+
+  @@map("content_analytics")
 }
 
 model ContentCategory {
@@ -471,7 +546,7 @@ model MangroveBoundary {
   type       String
   geometry   String            @db.Text
   location   MangroveLocation? @relation(fields: [locationId], references: [id])
-  locationId Int               @map("location_id") @unique
+  locationId Int               @unique @map("location_id")
   createdAt  DateTime          @default(now()) @map("created_at")
   updatedAt  DateTime?         @map("updated_at")
 
