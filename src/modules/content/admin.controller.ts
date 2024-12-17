@@ -7,6 +7,9 @@ import { getAdminContentDetailId } from "./services/admin_get_id";
 import { softDeleteContent } from "./services/admin_soft_delete";
 import { updateContentAdmin } from "./services/admin_update";
 import { createContentAdmin } from "./services/admin_create";
+import { getAllContentFollowerSubmissionAdmin } from "./services/admin_get_follower_content";
+import { getFollowerContentDetailAdmin } from "./services/admin_get_follower_detail";
+import { updateFollowerContentAdmin } from "./services/admin_update_status_follower";
 
 class ContentAdminController {
     static async getAll(req: Request, res: Response, next: NextFunction){
@@ -67,6 +70,40 @@ class ContentAdminController {
             await softDeleteContent(req.params.id);
 
             response(res, ResStatus.SUCCESS, true, null, 'Success soft delete data content');
+        } catch(err) {
+            next(err)
+        }
+    }
+
+    static async getAllFollowerContent(req: Request, res: Response, next: NextFunction){
+        const filter = req.query as unknown as GetContentListFilterDTO;
+
+        try {
+            const data = await getAllContentFollowerSubmissionAdmin({
+                ...filter,
+            });
+
+            response(res, ResStatus.SUCCESS, true, data, 'Success get all data');
+        } catch(err) {
+            next(err)
+        }
+    }
+
+    static async getFollowerContentDetail(req: Request, res: Response, next: NextFunction){
+        try {
+            const data = await getFollowerContentDetailAdmin(Number(req.params.id));
+
+            response(res, ResStatus.SUCCESS, true, data, 'Success get detail content');
+        } catch(err) {
+            next(err)
+        }
+    }
+
+    static async updateContentFollowerStatus(req: Request, res: Response, next: NextFunction){
+        try {
+            const data = await updateFollowerContentAdmin(Number(req.params.id), req.body.status, req.authorized.id);
+
+            response(res, ResStatus.CREATED, true, data, 'Success update data content');
         } catch(err) {
             next(err)
         }

@@ -5,16 +5,16 @@ import { internalServerError, prismaClientError, prismaNotFound } from 'src/cons
 
 const prisma = new PrismaClient();
 
-export const getContentDetailSlug = async (slug: string) => {
+export const getFollowerContentDetailId = async (id: number, authorId: string) => {
     try {
-        const exist = await prisma.content.findFirstOrThrow({
+        const exist = await prisma.followerContent.findFirstOrThrow({
             where: {
-                slug,
+                id,
                 deletedAt: null,
+                authorId,
             },
             include: {
                 thumbnail: true,
-                status: true,
                 medias: {
                     include: {
                         media: true
@@ -45,11 +45,7 @@ export const getContentDetailSlug = async (slug: string) => {
             }
         });
 
-        await prisma.contentAnalytic.create({
-            data: {
-                contentId: exist.id,
-            }
-        });
+        if(exist.authorId !== authorId) throw({ status: 401, message: 'Unauthorized user for access the content' });
 
         return {
             detail : exist,

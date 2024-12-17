@@ -5,16 +5,15 @@ import { internalServerError, prismaClientError, prismaNotFound } from 'src/cons
 
 const prisma = new PrismaClient();
 
-export const getContentDetailSlug = async (slug: string) => {
+export const getFollowerContentDetailAdmin = async (id: number) => {
     try {
-        const exist = await prisma.content.findFirstOrThrow({
+        const exist = await prisma.followerContent.findFirstOrThrow({
             where: {
-                slug,
+                id,
                 deletedAt: null,
             },
             include: {
                 thumbnail: true,
-                status: true,
                 medias: {
                     include: {
                         media: true
@@ -42,12 +41,6 @@ export const getContentDetailSlug = async (slug: string) => {
                         email: true,
                     }
                 }
-            }
-        });
-
-        await prisma.contentAnalytic.create({
-            data: {
-                contentId: exist.id,
             }
         });
 
