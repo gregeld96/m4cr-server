@@ -17,7 +17,8 @@ yarn
 ## First Timer Setup
 1. Copy .env.example and change it to .env
 2. Change DATABASE_URL with local machine DB information
-3. Run sript for get existing migration
+3. Fill all env variable based on real / production information
+4. Run sript for get existing migration
 ```
 npm run migrate-deploy
 ```
@@ -27,6 +28,16 @@ npm run migrate-deploy
 ```
 npm run seed-init
 ```
+
+## RUN PRODUCTION READY
+1. Run sript for build production ready
+```
+npm run build
+```
+
+## OTHER STEP PRODUCTION
+1. Install PM2
+2. Start with PM2 command
 
 ## Create new Migration
 1. If there any change related to schema.prisma
