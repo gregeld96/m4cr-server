@@ -1,3 +1,4 @@
+require('dotenv').config();
 const {
     PrismaClient
 } = require('@prisma/client');
@@ -5,7 +6,6 @@ const {
     uuidv7
 } = require('uuidv7');
 const bcrypt = require('bcryptjs');
-require('dotenv').config();
 
 const hashPassword = (inputPassword) => {
     var salt = bcrypt.genSaltSync(Number(process.env.SALT_KEY));
@@ -15,6 +15,8 @@ const hashPassword = (inputPassword) => {
 const prisma = new PrismaClient();
 
 async function main() {
+    await prisma.tag.deleteMany({});
+    await prisma.category.deleteMany({});
     await prisma.user.deleteMany({});
     await prisma.role.deleteMany({});
     await prisma.status.deleteMany({});
@@ -63,28 +65,6 @@ async function main() {
         ]
     });
 
-    await prisma.user.createMany({
-        data: [{
-                id: uuidv7(),
-                firstName: 'Bina Usaha',
-                lastName: 'Teknologi',
-                email: 'binausaha@gmail.com',
-                password: hashPassword("admin"),
-                roleId: roleId,
-                statusId: statusId,
-            },
-            {
-                id: uuidv7(),
-                firstName: 'Bina Usaha',
-                lastName: 'Teknologi',
-                email: 'gregeld96@gmail.com',
-                password: hashPassword("admin"),
-                roleId: roleId,
-                statusId: statusId,
-            },
-        ]
-    });
-
     await prisma.tag.createMany({
         data: [
             {
@@ -103,6 +83,28 @@ async function main() {
             },
             {
                 name: 'blog',
+            },
+        ]
+    });
+
+    await prisma.user.createMany({
+        data: [{
+                id: uuidv7(),
+                firstName: 'Bina Usaha',
+                lastName: 'Teknologi',
+                email: 'm4cr.binausaha@gmail.com',
+                password: hashPassword("admin"),
+                roleId: roleId,
+                statusId: statusId,
+            },
+            {
+                id: uuidv7(),
+                firstName: 'Bina Usaha',
+                lastName: 'Teknologi',
+                email: 'gregeld96@gmail.com',
+                password: hashPassword("admin"),
+                roleId: roleId,
+                statusId: statusId,
             },
         ]
     });

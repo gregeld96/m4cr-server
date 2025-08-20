@@ -37,7 +37,10 @@ npm run build
 
 ## OTHER STEP PRODUCTION
 1. Install PM2
-2. Start with PM2 command
+2. Start the app with PM2 command
+```
+pm2 start /dist/src/index.js --name [application_name]
+```
 
 ## Create new Migration
 1. If there any change related to schema.prisma
